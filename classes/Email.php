@@ -85,12 +85,12 @@ class Email {
              }
              </style>
              <body>
-                 <h1>UpTask</h1>
+                 <h1>DevWebCamp</h1>
                  <h1>" . $this->nombre . "</h1>
                  <h2>¡Gracias por registrarte!</h2>
-                 <p>Por favor confirma tu correo electrónico para que puedas comenzar a disfrutar de todos los servicios de UpTask</p>
+                 <p>Por favor confirma tu correo electrónico para que puedas comenzar a disfrutar de todos los servicios de DevWebCamp</p>
                  <a href='http://localhost:3000/confirmar?token=" . $this->token . "'><button>Verificar</button></a>
-                 <p>Si tú no te registraste en UpTask, por favor ignora este correo electrónico.</p>
+                 <p>Si tú no te registraste en DevWebCamp, por favor ignora este correo electrónico.</p>
                  <div><p></p></div>
                  <p><span>Este correo electrónico fue enviado desde una dirección solamente de notificaciones que no puede aceptar correo electrónico entrante. Por favor no respondas a este mensaje.</span></p>
              </body>
@@ -168,10 +168,10 @@ class Email {
 			}
 			</style>
 			<body>
-				<h1>UpTask</h1>
+				<h1>DevWebCamp</h1>
 				<h1>" . $this->nombre . "</h1>
 				<h2>Parece que has olvidado tu contraseña</h2>
-				<p>Usa el siguiente boton para volver a disfrutar de todos los servicios de UpTask</p>
+				<p>Usa el siguiente boton para volver a disfrutar de todos los servicios de DevWebCamp</p>
 				<a href='http://localhost:3000/reestablecer?token=" . $this->token . "'><button>Reestablecer mi contraseña</button></a>
 				<p>Si tú no realizaste esta solicitud, por favor ignora este correo electrónico.</p>
 				<div><p></p></div>

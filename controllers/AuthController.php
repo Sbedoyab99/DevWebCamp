@@ -33,9 +33,16 @@ class AuthController {
                         $_SESSION['apellido'] = $usuario->apellido;
                         $_SESSION['email'] = $usuario->email;
                         $_SESSION['admin'] = $usuario->admin ?? null;
+
+                        // Redirecicono
+                        if($usuario->admin) {
+                            header('locatio: /admin/dashboard');
+                        } else {
+                            header('location: /finalizar-registro');
+                        }
                         
                     } else {
-                        Usuario::setAlerta('error', 'Password Incorrecto');
+                        Usuario::setAlerta('error', 'Contraseña Incorrecta');
                     }
                 }
             }
@@ -114,38 +121,26 @@ class AuthController {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario = new Usuario($_POST);
             $alertas = $usuario->validarEmail();
-
             if(empty($alertas)) {
                 // Buscar el usuario
                 $usuario = Usuario::where('email', $usuario->email);
-
                 if($usuario && $usuario->confirmado) {
-
                     // Generar un nuevo token
                     $usuario->crearToken();
                     unset($usuario->password2);
-
                     // Actualizar el usuario
                     $usuario->guardar();
-
                     // Enviar el email
                     $email = new Email( $usuario->email, $usuario->nombre, $usuario->token );
                     $email->enviarInstrucciones();
-
-
                     // Imprimir la alerta
-                    // Usuario::setAlerta('exito', 'Hemos enviado las instrucciones a tu email');
-
-                    $alertas['exito'][] = 'Hemos enviado las instrucciones a tu email';
+                    Usuario::setAlerta('exito', 'Hemos enviado las instrucciones a tu email');
                 } else {
-                 
-                    // Usuario::setAlerta('error', 'El Usuario no existe o no esta confirmado');
-
-                    $alertas['error'][] = 'El Usuario no existe o no esta confirmado';
+                    Usuario::setAlerta('error', 'El Usuario no existe o no esta confirmado');
                 }
             }
+            $alertas = Usuario::getAlertas();
         }
-
         // Muestra la vista
         $router->render('auth/olvide', [
             'titulo' => 'Olvide mi Password',
@@ -169,28 +164,31 @@ class AuthController {
             $token_valido = false;
         }
 
-
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-            // Añadir el nuevo password
-            $usuario->sincronizar($_POST);
-
-            // Validar el password
-            $alertas = $usuario->validarPassword();
-
-            if(empty($alertas)) {
-                // Hashear el nuevo password
-                $usuario->hashPassword();
-
-                // Eliminar el Token
-                $usuario->token = null;
-
-                // Guardar el usuario en la BD
-                $resultado = $usuario->guardar();
-
-                // Redireccionar
-                if($resultado) {
-                    header('Location: /');
+            
+            if(password_verify($_POST['password'], $usuario->password)) {
+                Usuario::setAlerta('error', 'La Nueva Contraseña No Puede Ser Igual a la Anterior');
+            } else {
+                // Añadir el nuevo password
+                $usuario->sincronizar($_POST);
+    
+                // Validar el password
+                $alertas = $usuario->validarPassword();
+    
+                if(empty($alertas)) {
+                    // Hashear el nuevo password
+                    $usuario->hashPassword();
+    
+                    // Eliminar el Token
+                    $usuario->token = null;
+    
+                    // Guardar el usuario en la BD
+                    $resultado = $usuario->guardar();
+    
+                    // Redireccionar
+                    if($resultado) {
+                        header('Location: /login');
+                    }
                 }
             }
         }
@@ -199,7 +197,7 @@ class AuthController {
         
         // Muestra la vista
         $router->render('auth/reestablecer', [
-            'titulo' => 'Reestablecer Password',
+            'titulo' => 'Reestablecer Contraseña',
             'alertas' => $alertas,
             'token_valido' => $token_valido
         ]);
@@ -233,7 +231,7 @@ class AuthController {
             // Guardar en la BD
             $usuario->guardar();
 
-            Usuario::setAlerta('exito', 'Cuenta Comprobada Correctamente');
+            Usuario::setAlerta('exito', 'Cuenta Confirmada Correctamente');
         }
 
      

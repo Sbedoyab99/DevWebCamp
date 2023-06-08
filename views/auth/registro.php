@@ -1,7 +1,8 @@
 <main class="auth">
 	<h2 class="auth__heading"><?php echo $titulo ?></h2>
 	<p class="auth__texto">Regístrate en DevWebCamp</p>
-	<form class="formulario">
+	<?php include_once __DIR__ . '/../templates/alertas.php'?>
+	<form class="formulario" method="POST" novalidate>
 		<div class="formulario__campo">
 			<label for="nombre" class="formulario__label">Nombre</label>
 			<input 
@@ -9,7 +10,8 @@
 				class="formulario__input"
 				placeholder="Ingresa tu Nombre"
 				id="nombre"
-				name="nombre">
+				name="nombre"
+				value="<?php echo $usuario->nombre ?>">
 		</div>
 		<div class="formulario__campo">
 			<label for="apellido" class="formulario__label">Apellido</label>
@@ -18,7 +20,8 @@
 				class="formulario__input"
 				placeholder="Ingresa tu Apellido"
 				id="apellido"
-				name="apellido">
+				name="apellido"
+				value="<?php echo $usuario->apellido ?>">
 		</div>
 		<div class="formulario__campo">
 			<label for="email" class="formulario__label">Email</label>
@@ -27,7 +30,8 @@
 				class="formulario__input"
 				placeholder="Ingresa tu Email"
 				id="email"
-				name="email">
+				name="email"
+				value="<?php echo $usuario->email ?>">
 		</div>
 		<div class="formulario__campo">
 			<label for="password" class="formulario__label">Contraseña</label>
@@ -41,7 +45,7 @@
 		<div class="formulario__campo">
 			<label for="password2" class="formulario__label">Confirmación</label>
 			<input 
-				type="password2"
+				type="password"
 				class="formulario__input"
 				placeholder="Repite tu Contraseña"
 				id="password2"
