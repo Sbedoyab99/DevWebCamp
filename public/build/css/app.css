@@ -437,6 +437,40 @@ h3 {
 .formulario__submit--registrar {
   width: 100%;
 }
+.formulario__listado {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.formulario__listado > li {
+  background-color: #007df4;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 1.4rem;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+.formulario__tag {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.formulario__tag .tag__eliminar {
+  display: none;
+}
+.formulario__tag:hover {
+  background-color: #00498e;
+}
+.formulario__tag:hover .tag__eliminar {
+  display: block;
+}
+.formulario__tag:hover .tag__eliminar:hover {
+  cursor: pointer;
+}
 
 .acciones {
   margin-top: 3rem;
@@ -749,6 +783,7 @@ h3 {
 .dashboard__grid {
   display: flex;
   flex: 1;
+  overflow-y: auto;
 }
 .dashboard__sidebar {
   background-color: #2f405d;
@@ -784,6 +819,7 @@ h3 {
 .dashboard__contenido {
   padding: 1rem 1rem 3rem 1rem;
   width: 100%;
+  overflow-y: scroll;
 }
 @media (min-width: 768px) {
   .dashboard__contenido {

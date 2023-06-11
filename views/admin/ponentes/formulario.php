@@ -61,7 +61,7 @@
 		<input 
 			type="text"
 			class="formulario__input"
-			id="nombre"
+			id="tags_input"
 			placeholder="Ej: Node.js, PHP, CSS, Laravel, UI/UX"
 		/>
 	</div>
