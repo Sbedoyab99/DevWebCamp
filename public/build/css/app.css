@@ -846,6 +846,7 @@ h3 {
   width: 100%;
   display: inline-block;
   font-size: 1.4rem;
+  margin-bottom: 2rem;
 }
 .dashboard__boton:hover {
   background-color: #0063c1;

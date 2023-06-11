@@ -65,9 +65,8 @@
 			placeholder="Ej: Node.js, PHP, CSS, Laravel, UI/UX"
 		/>
 	</div>
-	<div id="tags" class="formulario__listado">
-		<input type="hidden" name="tags" value="<?php echo $ponente->tags ?? '' ?>">
-	</div>
+	<div id="tags" class="formulario__listado"></div>
+	<input type="hidden" name="tags" value="<?php echo $ponente->tags ?? '' ?>">
 </fieldset>
 <fieldset class="formulario__fieldset">
 	<legend class="formulario__legend">Redes Sociales</legend>
