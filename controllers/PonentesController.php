@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Classes\Paginacion;
 use Model\Ponente;
 use MVC\Router;
 use Intervention\Image\ImageManagerStatic as Image;
@@ -9,12 +10,33 @@ use Intervention\Image\ImageManagerStatic as Image;
 class PonentesController {
 	public static function index(Router $router) {
 		isAdmin();
-		// Recupero los ponentes de la base de datos
-		$ponentes = Ponente::all();
+		// Numero de Registros por pagina
+		$registrosPP = 5;
+		// Recupero la pagina actual
+		$paginaActual = $_GET['page'];
+		// Valido que la pagina actual sea un numero entero
+		$paginaActual = filter_var($paginaActual, FILTER_VALIDATE_INT);
+		// Si no esta declarada, si no es un entero o si es un numero negativo o 0:
+		if(!$paginaActual || $paginaActual < 1) {
+			// Redirecciono a la primer pagina
+			header('location: /admin/ponentes?page=1');
+		}
+		// Recupero el total de registros en la base de datos
+		$totalRegistros = Ponente::total();
+		// Creo una nueva instancia para paginar
+		$paginacion = new Paginacion($paginaActual, $registrosPP, $totalRegistros);
+		// Si la pagina actual es mayor al total de paginas:
+		if($paginacion->totalPaginas() < $paginaActual) {
+			// Redirecciono
+			header('location: /admin/ponentes?page=1');
+		}
+		// Recupero los ponentes a recuperar en la pagina
+		$ponentes = Ponente::paginar($registrosPP, $paginacion->offset());
 		// Renderizo la pagina
 		$router->render('admin/ponentes/index', [
 			'titulo' => 'Ponentes / Conferencistas',
-			'ponentes' => $ponentes
+			'ponentes' => $ponentes,
+			'paginacion' => $paginacion->paginacion()
 		]);
 	}
 

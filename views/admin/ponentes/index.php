@@ -46,6 +46,8 @@
 	<?php } else { ?>
 		<p class="text-center">No Hay Ponentes Registrados</p>
 	<?php } ?>
-
-
 </div>
+
+<?php
+	echo $paginacion;
+?>
