@@ -8,13 +8,18 @@ use Intervention\Image\ImageManagerStatic as Image;
 
 class PonentesController {
 	public static function index(Router $router) {
+		isAdmin();
+		// Recupero los ponentes de la base de datos
+		$ponentes = Ponente::all();
 		// Renderizo la pagina
 		$router->render('admin/ponentes/index', [
-			'titulo' => 'Ponentes / Conferencistas'
+			'titulo' => 'Ponentes / Conferencistas',
+			'ponentes' => $ponentes
 		]);
 	}
 
 	public static function crear(Router $router) {
+		isAdmin();
 		// Creo una nueva instancia de ponentes
 		$ponente = new Ponente;
 		// Creo un array de alertas vacio
@@ -48,7 +53,7 @@ class PonentesController {
 			if(empty($alertas)) {
 				// Guardo la imagen en la carpeta en ambos formatos
 				$image_png->save($carpetaImagenes . '/' . $nombreImagen . '.png');
-				$image_png->save($carpetaImagenes . '/' . $nombreImagen . '.webp');
+				$image_webp->save($carpetaImagenes . '/' . $nombreImagen . '.webp');
 				// Guardar en la base de datos
 				
 				$resultado = $ponente->guardar();
@@ -58,11 +63,118 @@ class PonentesController {
 				}
 			}
 		}
+		// Recupero las redes para autocompletar en caso de que haya un error
+		$redes = json_decode($ponente->redes);
 		// Renderizo la pagina
 		$router->render('admin/ponentes/crear', [
 			'titulo' => 'Registrar Ponente',
 			'alertas' => $alertas,
-			'ponente' => $ponente
+			'ponente' => $ponente,
+			'redes' => $redes
 		]);
+	}
+
+	public static function editar(Router $router) {
+		isAdmin();
+		// Recuperamos el ID del ponente
+		$id = $_GET['id'];
+		$alertas = [];
+		// Verificamos que el ID sea valido
+		$id = filter_var($id, FILTER_VALIDATE_INT);
+		// Si el id no es valido:
+		if(!$id) {
+			// Redireccionamos
+			header('location: /admin/ponentes');
+		}
+		// Recuperamos el ponente con ese id
+		$ponente = Ponente::find($id);
+		// Si no se encuentra un ponente:
+		if(!$ponente) {
+			// Redireccionamos
+			header('location: /admin/ponentes');
+		}
+		// Recupero el nombre de la imagen actual de la base de datos
+		$ponente->imagen_actual = $ponente->imagen;
+		// recupero el objeto json de la base de datos y lo convierto en un array
+		$redes = json_decode($ponente->redes);
+		// Si se guardan cambios:
+		if($_SERVER['REQUEST_METHOD']  === 'POST') {
+			// Si hay una imagen cargada:
+			if(!empty($_FILES['imagen']['tmp_name'])) {
+				// Declaro el directorio para guardar las imagenes
+				$carpetaImagenes = '../public/img/speakers';
+				// Si el directorio no existe:
+				if(!is_dir($carpetaImagenes)) {
+					// Creo el directorio
+					mkdir($carpetaImagenes, 0755, true);
+				}
+				// Eliminar la imagen previa
+				unlink($carpetaImagenes . '/' . $ponente->imagen_actual . ".png" );
+				unlink($carpetaImagenes . '/' . $ponente->imagen_actual . ".webp" );
+				// Convierto la imagen a png y webp
+				$image_png = Image::make($_FILES['imagen']['tmp_name'])->fit(800,800)->encode('png',80);
+				$image_webp = Image::make($_FILES['imagen']['tmp_name'])->fit(800,800)->encode('webp',80);
+				// Creo un nombre unico para la imagen
+				$nombreImagen = md5(uniqid(rand(), true));
+				// Almaceno en $_POST el nombre de la imagen 
+				$_POST['imagen'] = $nombreImagen;
+			// Si no hay imagen cargada:	
+			} else {
+				// almaceno en $_POST la imagen actual
+				$_POST['imagen'] = $ponente->imagen_actual;
+			}
+			// Convierto el array de redes a un string en formato Json
+			$_POST['redes'] = json_encode($_POST['redes'], JSON_UNESCAPED_SLASHES);
+			// Sincronizo la informacion de ponente con la informacion de $_POST
+			$ponente->sincronizar($_POST);
+			// Reviso que todos los campos esten bien diligenciados
+			$alertas = $ponente->validar();
+			// Si no hay alertas:
+			if(empty($alertas)) {
+				// Si hay una nueva imagen:
+				if(isset($nombreImagen)) {
+					// Guardo la imagen en la carpeta en ambos formatos
+					$image_png->save($carpetaImagenes . '/' . $nombreImagen . '.png');
+					$image_webp->save($carpetaImagenes . '/' . $nombreImagen . '.webp');
+				}
+				// Guardamos la informacion
+				$resultado = $ponente->guardar();
+				// Si se guardo correctamente:
+				if($resultado) {
+					// Redireccionamos
+					header('location: /admin/ponentes');
+				}
+			}
+		}
+		// Renderizo la pagina
+		$router->render('admin/ponentes/crear', [
+			'titulo' => 'Actualizar Ponente',
+			'alertas' => $alertas,
+			'ponente' => $ponente,
+			'redes' => $redes
+		]);
+	}
+
+	public static function eliminar() {
+		isAdmin();
+		// SI el metodo es $_POST:
+		if($_SERVER['REQUEST_METHOD'] === 'POST') {
+			// Recupero el id enviado
+			$id = $_POST['id'];
+			// Recupero el ponente con el id
+			$ponente = Ponente::find($id);
+			// Si no hay ponente:
+			if(!isset($ponente)) {
+				//Redirecciono
+				header('location: /admin/ponentes');
+			}
+			// Elimino el ponente
+			$resultado = $ponente->eliminar();
+			// Si se elimino correctamente:
+			if($resultado) {
+				// Redirecciono
+				header('location: /admin/ponentes');
+			}
+		}
 	}
 }
