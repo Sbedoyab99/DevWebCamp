@@ -520,6 +520,10 @@ h3 {
   color: #FFFFFF;
   background-color: #007df4;
 }
+.horas__hora--seleccionada {
+  color: #FFFFFF;
+  background-color: #5bafff;
+}
 
 .header {
   min-height: 60rem;
