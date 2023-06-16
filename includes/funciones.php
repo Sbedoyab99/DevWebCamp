@@ -13,16 +13,32 @@ function s($html) : string {
 function paginaActual($path) : bool {
     return str_contains($_SERVER['PATH_INFO'], $path) ? true : false;
 }
+function Auth() : bool {
+    if(!isset($_SESSION)) {
+        session_start();
+    }
+    return isset($_SESSION['nombre']) && !empty($_SESSION);
+}
 function isAuth() : void {
-    session_start();
+    if(!isset($_SESSION)) {
+        session_start();
+    }
     if(isset($_SESSION['nombre']) && !empty($_SESSION)){
         return;
     }   else {
         header('location: /login');
     }
 }
+function Admin() : bool {
+    if(!isset($_SESSION)) {
+        session_start();
+    }
+    return isset($_SESSION['admin']) && !empty($_SESSION['admin']);
+}
 function isAdmin() : void {
-    session_start();
+    if(!isset($_SESSION)) {
+        session_start();
+    }
     if(isset($_SESSION['admin']) && !empty($_SESSION['admin'])){
         return;
     } else {
