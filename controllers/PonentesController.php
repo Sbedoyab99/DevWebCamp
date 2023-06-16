@@ -178,9 +178,9 @@ class PonentesController {
 	}
 
 	public static function eliminar() {
-		isAdmin();
 		// SI el metodo es $_POST:
 		if($_SERVER['REQUEST_METHOD'] === 'POST') {
+			isAdmin();
 			// Recupero el id enviado
 			$id = $_POST['id'];
 			// Recupero el ponente con el id

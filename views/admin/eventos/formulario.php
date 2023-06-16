@@ -40,10 +40,11 @@
 					type="radio"
 					id="<?php echo $dia->nombre ?>"
 					name="dia"
-					value="<?php echo $dia->id ?>">
+					value="<?php echo $dia->id ?>"
+					<?php echo $evento->dia_id === $dia->id ? 'checked' : '' ?>>	
 			<?php } ?>
 		</div>
-		<input type="hidden" name="dia_id" value="">
+		<input type="hidden" name="dia_id" value="<?php echo $evento->dia_id; ?>">
 	</div>
 	<div id="horas" class="formulario__campo">
 		<label class="formulario__label" for="">Seleccionar Hora</label>
@@ -52,7 +53,7 @@
 				<li data-hora-id="<?php echo $hora->id ?>" class="horas__hora horas__hora--deshabilitada"><?php echo $hora->hora ?></li>
 			<?php } ?>
 		</ul>
-		<input type="hidden" name="hora_id" value="">
+		<input type="hidden" name="hora_id" value="<?php echo $evento->hora_id; ?>">
 	</div>
 </fieldset>
 <fieldset class="formulario__fieldset">
@@ -65,6 +66,8 @@
 			id="ponentes"
 			placeholder="Buscar Ponentes"
 		/>
+		<ul class="listado-ponentes" id="listado-ponentes"></ul>
+		<input type="hidden" name="ponente_id" value='<?php echo $evento->ponente_id; ?>'>
 	</div>
 	<div class="formulario__campo">
 		<label class="formulario__label" for="disponibles">Lugares Disponibles</label>
