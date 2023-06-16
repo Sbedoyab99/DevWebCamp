@@ -126,7 +126,7 @@ class ActiveRecord {
 
     // Paginar los registros
     public static function paginar($registrosPP, $offset) {
-        $query = "SELECT * FROM " . static::$tabla . "  ORDER BY id DESC LIMIT {$registrosPP} OFFSET {$offset}" ;
+        $query = "SELECT * FROM " . static::$tabla . " ORDER BY id DESC LIMIT {$registrosPP} OFFSET {$offset}" ;
         $resultado = self::consultarSQL($query);
         return $resultado;
     }
@@ -136,6 +136,13 @@ class ActiveRecord {
         $query = "SELECT * FROM " . static::$tabla . " WHERE {$columna} = '{$valor}'";
         $resultado = self::consultarSQL($query);
         return array_shift( $resultado ) ;
+    }
+
+    // Retornar los registros por un orden
+    public static function ordenar($columna, $orden) {
+        $query = "SELECT * FROM " . static::$tabla . " ORDER BY {$columna} {$orden}";
+        $resultado = self::consultarSQL($query);
+        return $resultado;
     }
 
     // Busqueda Where con multiples Columnas
