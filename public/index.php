@@ -11,6 +11,7 @@ use Controllers\PaginasController;
 use Controllers\PonentesController;
 use Controllers\RegalosController;
 use Controllers\RegistradosController;
+use Controllers\RegistroController;
 use MVC\Router;
 
 $router = new Router();
@@ -61,4 +62,12 @@ $router->get('/devwebcamp', [PaginasController::class, 'evento']);
 $router->get('/paquetes', [PaginasController::class, 'paquetes']);
 $router->get('/eventos', [PaginasController::class, 'eventos']);
 $router->get('/404', [PaginasController::class, 'error']);
+
+// REGISTRO DE USUARIOS
+$router->get('/finalizar-registro', [RegistroController::class, 'crear']);
+$router->post('/finalizar-registro/gratis', [RegistroController::class, 'gratis']);
+
+// BOLETO VIRTUAL
+$router->get('/boleto', [RegistroController::class, 'boleto']);
+
 $router->comprobarRutas();
