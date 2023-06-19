@@ -56,6 +56,7 @@ $router->post('/admin/eventos/eliminar', [EventosController::class, 'eliminar'])
 $router->get('/api/eventos-horario', [APIEventos::class, 'index']);
 $router->get('/api/ponentes', [APIPonentes::class, 'index']);
 $router->get('/api/ponente', [APIPonentes::class, 'ponente']);
+$router->post('/finalizar-registro/pagar', [RegistroController::class, 'pagar']);
 /** AREA PUBLICA */
 $router->get('/', [PaginasController::class, 'index']);
 $router->get('/devwebcamp', [PaginasController::class, 'evento']);
@@ -66,6 +67,7 @@ $router->get('/404', [PaginasController::class, 'error']);
 // REGISTRO DE USUARIOS
 $router->get('/finalizar-registro', [RegistroController::class, 'crear']);
 $router->post('/finalizar-registro/gratis', [RegistroController::class, 'gratis']);
+$router->get('/finalizar-registro/conferencias', [RegistroController::class, 'conferencias']);
 
 // BOLETO VIRTUAL
 $router->get('/boleto', [RegistroController::class, 'boleto']);
