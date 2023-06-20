@@ -5,9 +5,11 @@ namespace Controllers;
 use Model\Categoria;
 use Model\Dia;
 use Model\Evento;
+use Model\EventosRegistros;
 use Model\Hora;
 use Model\Paquete;
 use Model\Ponente;
+use Model\Regalo;
 use Model\Registro;
 use Model\Usuario;
 use MVC\Router;
@@ -16,9 +18,16 @@ class RegistroController {
 	public static function crear(Router $router) {
 		isAuth();
 		$registro = Registro::where('usuario_id', $_SESSION['id']);
-		if(isset($registro) && $registro->paquete_id === '3') {
-			header('location: /boleto?id=' . urlencode($registro->token));
+		if(isset($registro)) {
+			if($registro->paquete_id === '3') {
+				header('location: /boleto?id=' . urlencode($registro->token));
+			} elseif($registro->paquete_id === '1') {
+				header('location: /finalizar-registro/conferencias');
+			} elseif($registro->paquete_id === '2') {
+				header('location: /boleto?id=' . urlencode($registro->token));
+			}
 		}
+
 		$router->render('registro/crear', [
 			'titulo' => 'Finalizar Registro'
 		]);
@@ -82,7 +91,7 @@ class RegistroController {
 				echo json_encode($resultado);
 			} catch (\Throwable $th) {
 				echo json_encode([
-					'resultado' => 'error'
+					'resultado' => false
 				]);
 			}
 		}
@@ -92,8 +101,17 @@ class RegistroController {
 		isAuth();
 		$usuario_id = $_SESSION['id'];
 		$registro = Registro::where('usuario_id', $usuario_id);
+		if(isset($registro) && $registro->paquete_id === '2') {
+			header('location: /boleto?id=' . urlencode($registro->token));
+			return;
+		}
 		if($registro->paquete_id !== '1') {
 			header('location: /');
+			return;
+		}
+		if($registro->regalo_id !== '10' && $registro->paquete_id === '1') {
+			header('location: /boleto?id=' . urlencode($registro->token));
+			return;
 		}
 		$eventos = Evento::ordenar('hora_id', 'ASC');
 		$eventosFormateados = [];
@@ -116,9 +134,57 @@ class RegistroController {
 			}
 		}
 
+		$regalos = Regalo::all('ASC');
+
+		if($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$eventos = explode(',', $_POST['eventos']);
+			if(empty($eventos)) {
+				echo json_encode(['resultado' => false]);
+				return;
+			}
+
+			$registro = Registro::where('usuario_id', $_SESSION['id']);
+			if(!isset($registro) || $registro->paquete_id !== '1') {
+				echo json_encode(['resultado' => false]);
+				return;
+			}
+			$eventosArray = [];
+			foreach($eventos as $evento_id) {
+				$evento = Evento::find($evento_id);
+				if(!isset($evento) || $evento->disponibles === '0') {
+					echo json_encode(['resultado' => false]);
+					return;
+				}
+				$eventosArray[] = $evento;
+			}
+
+			foreach($eventosArray as $evento) {
+				$evento->disponibles -= 1;
+				$evento->guardar();
+				$datos = [
+					'evento_id' => (int) $evento->id,
+					'registro_id' => (int) $registro->id
+				];
+				$registro_usuario = new EventosRegistros($datos);
+				$registro_usuario->guardar();
+			}
+			$registro->sincronizar(['regalo_id' => $_POST['regalo_id']]);
+			$resultado = $registro->guardar();
+			if($resultado) {
+				echo json_encode([
+					'resultado' => $resultado,
+					'token' => $registro->token
+				]);
+			} else {
+				echo json_encode(['resultado' => false]);
+			}
+			return;
+		}
+
 		$router->render('registro/conferencias', [
 			'titulo' => 'Workshops y Conferencias ',
-			'eventos' => $eventosFormateados
+			'eventos' => $eventosFormateados,
+			'regalos' => $regalos
 		]);
 	}
 }
