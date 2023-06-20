@@ -4,6 +4,7 @@ require_once __DIR__ . '/../includes/app.php';
 
 use Controllers\APIEventos;
 use Controllers\APIPonentes;
+use Controllers\APIRegalos;
 use Controllers\AuthController;
 use Controllers\DashboardController;
 use Controllers\EventosController;
@@ -56,6 +57,7 @@ $router->post('/admin/eventos/eliminar', [EventosController::class, 'eliminar'])
 $router->get('/api/eventos-horario', [APIEventos::class, 'index']);
 $router->get('/api/ponentes', [APIPonentes::class, 'index']);
 $router->get('/api/ponente', [APIPonentes::class, 'ponente']);
+$router->get('/api/regalos', [APIRegalos::class, 'index']);
 $router->post('/finalizar-registro/pagar', [RegistroController::class, 'pagar']);
 /** AREA PUBLICA */
 $router->get('/', [PaginasController::class, 'index']);

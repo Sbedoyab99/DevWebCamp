@@ -33,7 +33,7 @@
 					Refrigerio
 				</li>
 			</ul>
-			<p class="paquete__precio">$50</p>
+			<p class="paquete__precio">$199</p>
 		</div>
 		<div class="paquete">
 			<h3 class="paquete__nombre">Pase Virtual</h3>
@@ -51,7 +51,7 @@
 					Acceso a las Grabaciones
 				</li>
 			</ul>
-			<p class="paquete__precio">$25</p>
+			<p class="paquete__precio">$49</p>
 		</div>
 	</div>
 </main>

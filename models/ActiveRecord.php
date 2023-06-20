@@ -6,6 +6,7 @@ class ActiveRecord {
     protected static $db;
     protected static $tabla = '';
     protected static $columnasDB = [];
+    public $id;
 
     // Alertas y Mensajes
     protected static $alertas = [];
@@ -118,10 +119,10 @@ class ActiveRecord {
     }
 
     // Obtener Registros con cierta cantidad
-    public static function get($limite) {
-        $query = "SELECT * FROM " . static::$tabla . " LIMIT {$limite} ORDER BY id DESC" ;
+    public static function get($limite, $orden = 'DESC') {
+        $query = "SELECT * FROM " . static::$tabla . " ORDER BY id {$orden} LIMIT {$limite}" ;
         $resultado = self::consultarSQL($query);
-        return array_shift( $resultado ) ;
+        return  $resultado  ;
     }
 
     // Paginar los registros
@@ -145,6 +146,13 @@ class ActiveRecord {
         return $resultado;
     }
 
+    // Retornar los registros por un orden y limite
+    public static function ordenarLimite($columna, $orden, $limite) {
+        $query = "SELECT * FROM " . static::$tabla . " ORDER BY {$columna} {$orden} LIMIT {$limite}";
+        $resultado = self::consultarSQL($query);
+        return $resultado;
+    }
+
     // Busqueda Where con multiples Columnas
     public static function whereArray($array = []) {
         $query = "SELECT * FROM " . static::$tabla . " WHERE ";
@@ -164,6 +172,21 @@ class ActiveRecord {
         $query = "SELECT COUNT(*) FROM " . static::$tabla;
         if($columna) {
             $query .= " WHERE {$columna} = {$valor}";
+        }
+        $resultado = self::$db->query($query);
+        $total = $resultado->fetch_array();
+        return array_shift($total);
+    }
+
+    // Contar los registros
+    public static function totalAray($array = []) {
+        $query = "SELECT COUNT(*) FROM " . static::$tabla . " WHERE ";
+        foreach($array as $key => $value) {
+            if($key === array_key_last($array)) {
+                $query .= "{$key} = '{$value}';";
+            } else {
+                $query .= "{$key} = '{$value}' AND ";
+            }
         }
         $resultado = self::$db->query($query);
         $total = $resultado->fetch_array();

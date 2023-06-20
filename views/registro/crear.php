@@ -84,7 +84,7 @@
  
         createOrder: function(data, actions) {
           return actions.order.create({
-            purchase_units: [{"description":"1","amount":{"currency_code":"USD","value":50}}]
+            purchase_units: [{"description":"1","amount":{"currency_code":"USD","value":199}}]
           });
         },
  
@@ -127,7 +127,7 @@
  
         createOrder: function(data, actions) {
           return actions.order.create({
-            purchase_units: [{"description":"2","amount":{"currency_code":"USD","value":25}}]
+            purchase_units: [{"description":"2","amount":{"currency_code":"USD","value":49}}]
           });
         },
  
